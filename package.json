@@ -47,6 +47,7 @@
     "electron-devtools-installer": "^3.1.1",
     "electron-squirrel-startup": "^1.0.0",
     "extract-zip": "^2.0.1",
+    "fiddle-core": "^0.0.2",
     "fs-extra": "^9.1.0",
     "getos": "^3.2.1",
     "mobx": "^6.5.0",

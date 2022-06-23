@@ -1,5 +1,8 @@
 import { Callout, Card } from '@blueprintjs/core';
+<<<<<<< HEAD
 import { shell } from 'electron';
+=======
+>>>>>>> 2387e51 (on a mission to remove node APIs from all over renderer codebase :P)
 import * as React from 'react';
 import contributorsJSON from '../../../static/contributors.json';
 import { Contributor } from 'src/interfaces';
@@ -48,7 +51,7 @@ export class CreditsSettings extends React.Component<
       const style: React.CSSProperties = {
         backgroundImage: `url(${avatar})`,
       };
-      const onClick = () => shell.openExternal(url);
+      const onClick = () => window.ElectronAPI.openExternalURL(url);
 
       return (
         <Card
@@ -82,4 +85,20 @@ export class CreditsSettings extends React.Component<
       </div>
     );
   }
+<<<<<<< HEAD
+=======
+
+  public async getContributors() {
+    try {
+      const contributorsFile = window.NodeAPI.joinPaths(
+        __dirname,
+        '../../static/contributors.json',
+      );
+      const contributors = await window.NodeAPI.readJSON(contributorsFile);
+      this.setState({ contributors });
+    } catch (error) {
+      console.warn(`CreditsSettings: Fetching contributors failed`, error);
+    }
+  }
+>>>>>>> 2387e51 (on a mission to remove node APIs from all over renderer codebase :P)
 }

@@ -7,6 +7,7 @@ import {
   MenuItem,
   Tooltip,
 } from '@blueprintjs/core';
+<<<<<<< HEAD
 import {
   ItemListPredicate,
   ItemListRenderer,
@@ -14,6 +15,9 @@ import {
   Select,
 } from '@blueprintjs/select';
 import { clipboard } from 'electron';
+=======
+import { ItemListPredicate, ItemRenderer, Select } from '@blueprintjs/select';
+>>>>>>> 2387e51 (on a mission to remove node APIs from all over renderer codebase :P)
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import semver from 'semver';
@@ -162,7 +166,7 @@ export const renderVersionContextMenu = (
       <MenuItem
         text="Copy Version Number"
         onClick={() => {
-          clipboard.writeText(version);
+          window.ElectronAPI.setClipboardText(version);
         }}
       />
     </Menu>,
