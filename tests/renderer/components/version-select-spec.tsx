@@ -18,7 +18,7 @@ import { disableDownload } from '../../../src/utils/disable-download';
 
 import { StateMock, VersionsMock } from '../../mocks/mocks';
 
-const { downloading, ready, unknown, unzipping } = VersionState;
+const { downloading, ready, missing, unzipping } = VersionState;
 const { remote, local } = VersionSource;
 
 jest.mock('../../../src/utils/disable-download.ts');
@@ -28,13 +28,13 @@ describe('VersionSelect component', () => {
 
   const mockVersion1 = {
     source: remote,
-    state: unknown,
+    state: missing,
     version: '1.0.0',
   };
 
   const mockVersion2 = {
     source: remote,
-    state: unknown,
+    state: missing,
     version: '3.0.0-unsupported',
   };
 
@@ -136,7 +136,7 @@ describe('VersionSelect component', () => {
     it('returns the correct label for a version not downloaded', () => {
       const input: RunnableVersion = {
         ...mockVersion1,
-        state: unknown,
+        state: missing,
       };
 
       expect(getItemLabel(input)).toBe('Not downloaded');
@@ -166,7 +166,7 @@ describe('VersionSelect component', () => {
       const icons: Array<{ state: VersionState; expected: string }> = [
         { state: downloading, expected: 'cloud-download' },
         { state: ready, expected: 'saved' },
-        { state: unknown, expected: 'cloud' },
+        { state: missing, expected: 'cloud' },
         { state: unzipping, expected: 'compressed' },
       ];
       icons.forEach(({ state, expected }) => {

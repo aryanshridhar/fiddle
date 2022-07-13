@@ -6,6 +6,7 @@ import {
   observable,
   when,
   makeObservable,
+  runInAction,
 } from 'mobx';
 
 import {
@@ -25,7 +26,6 @@ import {
 import { IpcEvents } from '../ipc-events';
 import { getName } from '../utils/get-name';
 import { normalizeVersion } from '../utils/normalize-version';
-import { removeBinary, setupBinary } from './binary';
 import { Bisector } from './bisect';
 import { EditorMosaic } from './editor-mosaic';
 import { getTemplate } from './content';
@@ -45,6 +45,14 @@ import {
 } from './versions';
 import { getUsername } from '../utils/get-username';
 import { ELECTRON_MIRROR } from './mirror-constants';
+import {
+  Runner,
+  Installer,
+  BaseVersions,
+  InstallState,
+  ProgressObject,
+} from '@aryanshridhar/fiddle-core';
+import { ELECTRON_DOWNLOAD_PATH, ELECTRON_INSTALL_PATH } from './constants';
 
 /**
  * The application's state. Exported as a singleton below.
@@ -157,6 +165,21 @@ export class AppState {
   private readonly defaultVersion: string;
   public appData: string;
 
+  // Populating versions in fiddle-core
+  // TODO(aryanshridhar): Docs recommends not to use this in production!
+  public baseVersions: BaseVersions = new BaseVersions(getElectronVersions());
+
+  // For managing downloads and versions for electron
+  public installer: Installer = new Installer({
+    electronDownloads: ELECTRON_DOWNLOAD_PATH,
+    electronInstall: ELECTRON_INSTALL_PATH,
+  });
+
+  public runner: Promise<Runner> = Runner.create({
+    installer: this.installer,
+    versions: this.baseVersions,
+  });
+
   constructor(versions: RunnableVersion[]) {
     makeObservable<AppState, 'setPageHash'>(this, {
       Bisector: observable,
@@ -245,6 +268,7 @@ export class AppState {
       version: observable,
       versions: observable,
       versionsToShow: computed,
+      changeRunnableState: action,
     });
 
     // Bind all actions
@@ -271,6 +295,16 @@ export class AppState {
     this.removeAcceleratorToBlock = this.removeAcceleratorToBlock.bind(this);
     this.hideChannels = this.hideChannels.bind(this);
     this.showChannels = this.showChannels.bind(this);
+    this.changeRunnableState = this.changeRunnableState.bind(this);
+
+    // Populating the current state of every version present
+    versions.forEach((ver: RunnableVersion) => {
+      // The local electron builds `state` are already setup in verions.ts
+      if (ver.source !== 'local') {
+        const { version } = ver;
+        ver.state = this.getVersionState(this.installer.state(version));
+      }
+    });
 
     // init fields
     this.versions = Object.fromEntries(versions.map((v) => [v.version, v]));
@@ -337,6 +371,11 @@ export class AppState {
     ]);
 
     this.setVersion(this.version);
+
+    // Trigger the change state event
+    this.installer.on('state-changed', ({ version, state }) => {
+      this.changeRunnableState(version, state);
+    });
   }
 
   /**
@@ -373,7 +412,8 @@ export class AppState {
       ver &&
       (showUndownloadedVersions ||
         ver.state === VersionState.unzipping ||
-        ver.state === VersionState.ready) &&
+        ver.state === VersionState.ready ||
+        ver.state === VersionState.downloaded) &&
       (showObsoleteVersions ||
         !oldest ||
         oldest <= Number.parseInt(ver.version)) &&
@@ -514,8 +554,15 @@ export class AppState {
         console.log(`State: Version ${version} already removed, doing nothing`);
       }
     } else {
-      if (state === VersionState.ready) {
-        await removeBinary(ver);
+      if (state === VersionState.ready || state == VersionState.downloaded) {
+        await this.installer.remove(version);
+        if (this.installer.state(version) === 'missing') {
+          const typeDefsCleaner = async () => {
+            window.ElectronFiddle.app.electronTypes.uncache(ver);
+          };
+
+          await typeDefsCleaner();
+        }
       } else {
         console.log(`State: Version ${version} already removed, doing nothing`);
       }
@@ -530,19 +577,55 @@ export class AppState {
    */
   public async downloadVersion(ver: RunnableVersion) {
     const { source, state, version } = ver;
+    const {
+      electronMirror,
+      electronNightlyMirror,
+    } = this.electronMirror.sources[this.electronMirror.sourceType];
 
     const isRemote = source === VersionSource.remote;
+    const isDownloaded = state === VersionState.downloaded;
     const isReady = state === VersionState.ready;
     if (!isRemote || isReady) {
       console.log(`State: Already have version ${version}; not downloading.`);
       return;
     }
 
+    if (isDownloaded) {
+      // The electron zip needs to be unzipped as well
+      await this.installer.install(version);
+      return;
+    }
+
     console.log(`State: Downloading Electron ${version}`);
-    await setupBinary(
-      ver,
-      this.electronMirror.sources[this.electronMirror.sourceType],
-    );
+    // Fix the Checksum error
+    await this.installer.install(version, {
+      mirror: {
+        electronMirror,
+        electronNightlyMirror,
+      },
+      progressCallback(progress: ProgressObject) {
+        // https://mobx.js.org/actions.html#runinaction
+        runInAction(() => {
+          const percent = Math.round(progress.percent * 100) / 100;
+          if (ver.downloadProgress !== percent) {
+            ver.downloadProgress = percent;
+          }
+        });
+      },
+    });
+  }
+
+  /**
+   * Changes the RunnableVersion state of the version passed
+   * and triggers a rerun in components
+   */
+  public changeRunnableState(version: string, state: VersionState) {
+    const ver = this.versions[version];
+    if (ver === undefined) {
+      return;
+    }
+    ver.state = state;
+    this.versions[version] = ver;
   }
 
   public hasVersion(input: string): boolean {
@@ -829,6 +912,33 @@ export class AppState {
     }
 
     window.location.hash = hash;
+  }
+
+  /**
+   * Maps the InstallState to Versionstate enum
+   * This lives temporary here until fiddle-core exports
+   * the same type.
+   *
+   * @private
+   * @param {state} InstallState
+   * @returns {VersionState}
+   */
+  public getVersionState(state: InstallState): VersionState {
+    switch (state) {
+      case 'downloaded':
+        return VersionState.downloaded;
+      case 'downloading':
+        return VersionState.downloading;
+      case 'installed':
+        return VersionState.ready;
+      case 'installing':
+        return VersionState.unzipping;
+      case 'missing':
+        return VersionState.missing;
+      // Ideally the code execution shoudln't reach at this point.
+      default:
+        return VersionState.missing;
+    }
   }
 
   /**

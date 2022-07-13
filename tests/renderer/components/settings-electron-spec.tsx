@@ -33,7 +33,7 @@ describe('ElectronSettings component', () => {
     let i = 0;
     store.versionsToShow[i++].state = VersionState.ready;
     store.versionsToShow[i++].state = VersionState.downloading;
-    store.versionsToShow[i++].state = VersionState.unknown;
+    store.versionsToShow[i++].state = VersionState.missing;
     store.versionsToShow[i++].state = VersionState.unzipping;
   });
 
@@ -93,7 +93,7 @@ describe('ElectronSettings component', () => {
     const version = '3.0.0';
     const ver = {
       source: VersionSource.remote,
-      state: VersionState.unknown,
+      state: VersionState.missing,
       version,
     };
     store.versions = { version: ver };
@@ -113,7 +113,7 @@ describe('ElectronSettings component', () => {
     const version = '99999.0.0';
     const ver = {
       source: VersionSource.local,
-      state: VersionState.unknown,
+      state: VersionState.missing,
       version,
     };
     store.versions = { version: ver };
@@ -234,7 +234,7 @@ describe('ElectronSettings component', () => {
       const version = '3.0.0';
       const ver = {
         source: VersionSource.remote,
-        state: VersionState.unknown,
+        state: VersionState.missing,
         version,
       };
 

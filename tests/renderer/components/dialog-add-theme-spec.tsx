@@ -14,7 +14,6 @@ import {
 import { StateMock } from '../../mocks/mocks';
 
 jest.mock('../../../src/renderer/ipc');
-jest.mock('../../../src/renderer/binary');
 
 describe('AddThemeDialog component', () => {
   let store: StateMock;

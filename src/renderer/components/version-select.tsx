@@ -68,9 +68,12 @@ export function getItemLabel({ source, state, name }: RunnableVersion): string {
   if (source === VersionSource.local) {
     label = name || 'Local';
   } else {
-    if (state === VersionState.unknown) {
+    if (state === VersionState.missing) {
       label = `Not downloaded`;
-    } else if (state === VersionState.ready) {
+    } else if (
+      state === VersionState.ready ||
+      state === VersionState.downloaded
+    ) {
       label = `Downloaded`;
     } else if (state === VersionState.downloading) {
       label = `Downloading`;
@@ -89,14 +92,18 @@ export function getItemLabel({ source, state, name }: RunnableVersion): string {
  */
 export function getItemIcon({ state }: RunnableVersion) {
   switch (state) {
-    case VersionState.unknown:
+    case VersionState.missing:
       return 'cloud';
     case VersionState.ready:
+    case VersionState.downloaded:
       return 'saved';
     case VersionState.downloading:
       return 'cloud-download';
     case VersionState.unzipping:
       return 'compressed';
+    // Ideally the code execution shoudln't reach at this point.
+    default:
+      return 'cloud';
   }
 }
 

@@ -320,7 +320,7 @@ export const ElectronSettings = observer(
       if (state === VersionState.downloading) {
         icon = 'cloud-download';
         humanState = 'Downloading';
-      } else if (state === VersionState.unknown) {
+      } else if (state === VersionState.missing) {
         // The only way for a local version to be unknown
         // is for it to have been deleted. Mark as unavailable.
         icon = isLocal ? 'issue' : 'cloud';
@@ -352,6 +352,7 @@ export const ElectronSettings = observer(
 
       switch (state) {
         case VersionState.ready:
+        case VersionState.downloaded:
           buttonProps.icon = 'trash';
           buttonProps.onClick = () => appState.removeVersion(ver);
           buttonProps.text = isLocal ? 'Remove' : 'Delete';
@@ -365,7 +366,7 @@ export const ElectronSettings = observer(
           buttonProps.text = 'Downloading';
           break;
 
-        case VersionState.unknown:
+        case VersionState.missing:
           buttonProps.disabled = false;
           buttonProps.loading = false;
           buttonProps.icon = isLocal ? 'trash' : 'cloud-download';

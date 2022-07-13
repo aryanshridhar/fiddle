@@ -19,7 +19,7 @@ interface RunnerProps {
 export const Runner = observer(
   class Runner extends React.Component<RunnerProps> {
     public render() {
-      const { downloading, unknown, unzipping, ready } = VersionState;
+      const { downloading, missing, unzipping, ready } = VersionState;
       const {
         isRunning,
         isInstallingModules,
@@ -30,7 +30,7 @@ export const Runner = observer(
       const state = currentElectronVersion?.state;
       const props: ButtonProps = { className: 'button-run', disabled: true };
 
-      if ([downloading, unknown].includes(state) && !isOnline) {
+      if ([downloading, missing].includes(state) && !isOnline) {
         props.text = 'Offline';
         props.icon = 'satellite';
         return <Button {...props} type={undefined} />;

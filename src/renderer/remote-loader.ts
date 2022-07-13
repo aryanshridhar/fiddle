@@ -174,7 +174,7 @@ export class RemoteLoader {
     if (!this.appState.hasVersion(version)) {
       const versionToDownload = {
         source: VersionSource.remote,
-        state: VersionState.unknown,
+        state: VersionState.missing,
         version,
       };
 

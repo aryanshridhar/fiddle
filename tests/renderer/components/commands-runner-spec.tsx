@@ -60,7 +60,7 @@ describe('Runner component', () => {
     });
 
     it('VersionState.unknown', () => {
-      store.currentElectronVersion.state = VersionState.unknown;
+      store.currentElectronVersion.state = VersionState.missing;
       expectSnapshotToMatch();
     });
   });

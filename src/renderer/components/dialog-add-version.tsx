@@ -9,15 +9,16 @@ import {
 import { observer } from 'mobx-react';
 import * as path from 'path';
 import * as React from 'react';
+import * as fs from 'fs-extra';
 import * as semver from 'semver';
 
 import { Version } from '../../interfaces';
 import { IpcEvents } from '../../ipc-events';
 import { getElectronNameForPlatform } from '../../utils/electron-name';
-import { getIsDownloaded } from '../binary';
 import { ipcRendererManager } from '../ipc';
 import { AppState } from '../state';
 import { getLocalVersionForPath } from '../versions';
+import { Installer } from '@aryanshridhar/fiddle-core';
 
 interface AddVersionDialogProps {
   appState: AppState;
@@ -100,7 +101,7 @@ export const AddVersionDialog = observer(
      * @param {React.ChangeEvent<HTMLInputElement>} event
      */
     public setFolderPath(folderPath: string) {
-      const isValidElectron = getIsDownloaded('custom', folderPath);
+      const isValidElectron = this.isValidElectronPath(folderPath);
       const existingLocalVersion = getLocalVersionForPath(folderPath);
 
       this.setState({ existingLocalVersion, folderPath, isValidElectron });
@@ -114,6 +115,16 @@ export const AddVersionDialog = observer(
         version,
         isValidVersion,
       });
+    }
+
+    /**
+     * Verifies if the local electron path is valid
+     *
+     * @param {string} folderPath
+     */
+    public isValidElectronPath(folderPath: string) {
+      const execPath = Installer.getExecPath(folderPath);
+      return fs.existsSync(execPath);
     }
 
     /**

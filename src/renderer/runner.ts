@@ -1,11 +1,15 @@
-import { ChildProcess, spawn } from 'child_process';
+import { ChildProcess } from 'child_process';
 import * as path from 'path';
 
-import { FileTransform, RunResult, RunnableVersion } from '../interfaces';
+import {
+  FileTransform,
+  RunResult,
+  RunnableVersion,
+  VersionState,
+} from '../interfaces';
 import { IpcEvents } from '../ipc-events';
 import { PackageJsonOptions } from '../utils/get-package';
 import { maybePlural } from '../utils/plural-maybe';
-import { getElectronBinaryPath, getIsDownloaded } from './binary';
 import { Bisector } from './bisect';
 import { ipcRendererManager } from './ipc';
 import {
@@ -15,10 +19,19 @@ import {
   PMOperationOptions,
 } from './npm';
 import { AppState } from './state';
+import { Installer } from '@aryanshridhar/fiddle-core';
+import { getVersionState } from './versions';
 
 export enum ForgeCommands {
   PACKAGE = 'package',
   MAKE = 'make',
+}
+
+interface RunFiddleParams {
+  localPath: string | undefined;
+  isValidBuild: boolean; // If the localPath is a valid Electron build
+  version: string; // The user selected version
+  dir: string;
 }
 
 const resultString: Record<RunResult, string> = Object.freeze({
@@ -147,7 +160,9 @@ export class Runner {
     const options = { includeDependencies: false, includeElectron: false };
 
     const { appState } = this;
-    const { version, localPath } = appState.currentElectronVersion;
+    const currentRunnable = appState.currentElectronVersion;
+    const { version, state, localPath } = currentRunnable;
+    const isValidBuild = getVersionState(currentRunnable) === 'installed';
 
     // If the current active version is unavailable when we try to run
     // the fiddle, show an error and fall back.
@@ -182,7 +197,10 @@ export class Runner {
       return RunResult.INVALID;
     }
 
-    const isReady = getIsDownloaded(version, localPath);
+    const isReady =
+      state === VersionState.ready ||
+      state === VersionState.downloaded ||
+      isValidBuild;
 
     if (!isReady) {
       console.warn(`Runner: Binary ${version} not ready`);
@@ -197,7 +215,12 @@ export class Runner {
       return RunResult.INVALID;
     }
 
-    return this.execute(dir);
+    return this.runFiddle({
+      localPath,
+      isValidBuild,
+      dir,
+      version,
+    });
   }
 
   /**
@@ -350,32 +373,23 @@ export class Runner {
   }
 
   /**
-   * Execute Electron.
-   *
-   * @param {string} dir
-   * @returns {Promise<RunResult>}
-   * @memberof Runner
+   * Actually runs the fiddle with either local electron build
+   * or the user selected electron version
    */
-  public async execute(dir: string): Promise<RunResult> {
-    const {
-      currentElectronVersion,
-      flushOutput,
-      pushOutput,
-      executionFlags,
-    } = this.appState;
-
-    const { version, localPath } = currentElectronVersion;
-    const binaryPath = getElectronBinaryPath(version, localPath);
-    console.log(`Runner: Binary ${binaryPath} ready, launching`);
-
+  private async runFiddle(params: RunFiddleParams): Promise<RunResult> {
+    const { localPath, isValidBuild, version, dir } = params;
+    const { runner, pushOutput, flushOutput } = this.appState;
+    const fiddleRunner = await runner;
     const env = this.buildChildEnvVars();
 
-    // Add user-specified cli flags if any have been set.
-    const options = [dir, '--inspect'].concat(executionFlags);
-
-    return new Promise((resolve, _reject) => {
-      this.child = spawn(binaryPath, options, { cwd: dir, env });
+    return new Promise(async (resolve, _reject) => {
+      this.child = await fiddleRunner.spawn(
+        isValidBuild && localPath ? Installer.getExecPath(localPath) : version,
+        dir,
+        { cwd: dir, env },
+      );
       this.appState.isRunning = true;
+
       pushOutput(`Electron v${version} started.`);
 
       this.child.stdout!.on('data', (data) =>

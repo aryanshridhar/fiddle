@@ -3,10 +3,11 @@ export type Files = Map<string, string>;
 export type FileTransform = (files: Files) => Promise<Files>;
 
 export enum VersionState {
-  ready = 'ready',
+  missing = 'missing',
   downloading = 'downloading',
-  unzipping = 'unzipping',
-  unknown = 'unknown',
+  downloaded = 'downloaded',
+  unzipping = 'installing',
+  ready = 'installed',
 }
 
 export enum VersionSource {
