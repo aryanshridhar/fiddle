@@ -3,7 +3,6 @@ import {
   ElectronReleaseChannel,
   PACKAGE_NAME,
   VersionSource,
-  VersionState,
 } from '../../src/interfaces';
 import { AppMock, StateMock, createEditorValues } from '../mocks/mocks';
 import { FetchMock } from '../utils';
@@ -310,7 +309,7 @@ describe('RemoteLoader', () => {
       expect(store.addNewVersions).toBeCalledWith([
         {
           source: VersionSource.remote,
-          state: VersionState.unknown,
+          state: 'missing',
           version,
         },
       ]);

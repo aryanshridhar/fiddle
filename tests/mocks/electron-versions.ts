@@ -1,8 +1,4 @@
-import {
-  RunnableVersion,
-  VersionSource,
-  VersionState,
-} from '../../src/interfaces';
+import { RunnableVersion, VersionSource } from '../../src/interfaces';
 
 export class VersionsMock {
   public readonly mockVersions: Record<string, RunnableVersion>;
@@ -13,7 +9,7 @@ export class VersionsMock {
 
     const arr = versions.map((version) => ({
       source: VersionSource.remote,
-      state: VersionState.ready,
+      state: 'installed',
       version,
     }));
 

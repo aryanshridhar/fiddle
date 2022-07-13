@@ -4,11 +4,11 @@ import {
   RunnableVersion,
   Version,
   VersionSource,
-  VersionState,
 } from '../interfaces';
-import { getVersionState } from './binary';
 import { normalizeVersion } from '../utils/normalize-version';
 import releasesJSON from '../../static/releases.json';
+import { Installer } from 'fiddle-core';
+import * as fs from 'fs-extra';
 
 /**
  * Returns a sensible default version string.
@@ -59,6 +59,11 @@ export function getReleaseChannel(
 export const enum VersionKeys {
   local = 'local-electron-versions',
   known = 'known-electron-versions',
+}
+
+const enum InitialVersionState {
+  missing = 'missing',
+  installed = 'installed',
 }
 
 /**
@@ -113,14 +118,33 @@ function saveVersions(key: VersionKeys, versions: Array<Version>) {
   window.localStorage.setItem(key, stringified);
 }
 
+/**
+ * Gets the current state of a specific version
+ * Valid local electron builds are marked as `installed`
+ *
+ * @param {Version} ver
+ * @returns {InitialVersionState}
+ */
+export function getVersionState(ver: Version): InitialVersionState {
+  const { localPath } = ver;
+  if (localPath !== undefined) {
+    const dir = Installer.getExecPath(localPath);
+    if (fs.existsSync(dir)) {
+      return InitialVersionState.installed;
+    }
+  }
+
+  return InitialVersionState.missing;
+}
+
 export function makeRunnable(ver: Version): RunnableVersion {
   const ret: RunnableVersion = {
     ...ver,
     version: normalizeVersion(ver.version),
     source: Boolean(ver.localPath) ? VersionSource.local : VersionSource.remote,
-    state: VersionState.unknown,
+    state: getVersionState(ver),
   };
-  ret.state = getVersionState(ver);
+
   return ret;
 }
 
@@ -198,7 +222,7 @@ export function saveLocalVersions(versions: Array<Version | RunnableVersion>) {
  *
  * @returns {Array<Version>}
  */
-function getReleasedVersions(): Array<Version> {
+export function getReleasedVersions(): Array<Version> {
   return getVersions(VersionKeys.known, () => {
     return releasesJSON as Array<Version>;
   });

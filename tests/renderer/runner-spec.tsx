@@ -3,12 +3,10 @@ import * as path from 'path';
 import * as semver from 'semver';
 
 import { IpcEvents } from '../../src/ipc-events';
-import { getIsDownloaded } from '../../src/renderer/binary';
 import { ipcRendererManager } from '../../src/renderer/ipc';
 import {
   RunResult,
   RunnableVersion,
-  VersionState,
   VersionSource,
 } from '../../src/interfaces';
 import {
@@ -27,10 +25,6 @@ import {
 
 jest.mock('../../src/renderer/npm');
 jest.mock('../../src/renderer/file-manager');
-jest.mock('../../src/renderer/binary', () => ({
-  getIsDownloaded: jest.fn(),
-  getElectronBinaryPath: jest.fn(),
-}));
 jest.mock('fs-extra');
 jest.mock('child_process');
 jest.mock('path');
@@ -54,7 +48,6 @@ describe('Runner component', () => {
     ipcRendererManager.removeAllListeners();
 
     (getIsPackageManagerInstalled as jest.Mock).mockReturnValue(true);
-    (getIsDownloaded as jest.Mock).mockReturnValue(true);
 
     instance = new Runner(store as any);
   });
@@ -74,7 +67,6 @@ describe('Runner component', () => {
 
       expect(result).toBe(RunResult.SUCCESS);
       expect(store.isRunning).toBe(false);
-      expect(getIsDownloaded).toHaveBeenCalled();
       expect(fileManager.saveToTemp).toHaveBeenCalled();
       expect(addModules).toHaveBeenCalled();
     });
@@ -98,7 +90,6 @@ describe('Runner component', () => {
 
       expect(result).toBe(RunResult.SUCCESS);
       expect(store.isRunning).toBe(false);
-      expect(getIsDownloaded).toHaveBeenCalled();
       expect(fileManager.saveToTemp).toHaveBeenCalled();
       expect(addModules).toHaveBeenCalled();
     });
@@ -154,7 +145,7 @@ describe('Runner component', () => {
       store.currentElectronVersion = {
         version: 'test-0',
         localPath: '/i/definitely/do/not/exist',
-        state: VersionState.ready,
+        state: 'installed',
         source: VersionSource.local,
       } as const;
 
@@ -237,8 +228,6 @@ describe('Runner component', () => {
     });
 
     it('does not run version not yet downloaded', async () => {
-      (getIsDownloaded as jest.Mock).mockReturnValueOnce(false);
-
       expect(await instance.run()).toBe(RunResult.INVALID);
     });
 

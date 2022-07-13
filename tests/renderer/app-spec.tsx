@@ -6,7 +6,6 @@ import { IpcEvents } from '../../src/ipc-events';
 import { defaultDark, defaultLight } from '../../src/renderer/themes-defaults';
 import { ipcRendererManager } from '../../src/renderer/ipc';
 import { waitFor } from '../utils';
-import { setupBinary } from '../../src/renderer/binary';
 
 global.fetch = window.fetch = jest.fn();
 
@@ -25,7 +24,6 @@ jest.mock('../../src/renderer/components/output-editors-wrapper', () => ({
 // calls setVersion(), which tries to fetch binary & types.
 jest.mock('../../src/renderer/binary', () => ({
   getVersionState: jest.fn(),
-  setupBinary: jest.fn(),
 }));
 
 describe('App component', () => {
@@ -37,8 +35,6 @@ describe('App component', () => {
   });
 
   beforeEach(() => {
-    (setupBinary as jest.Mock).mockReturnValue(() => Promise.resolve());
-
     // make a real App and inject it into the mocks
     ({ ElectronFiddle } = window as any);
     const { app: appMock } = ElectronFiddle;

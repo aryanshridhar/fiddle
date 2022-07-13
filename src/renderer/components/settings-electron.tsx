@@ -19,7 +19,6 @@ import {
   ElectronReleaseChannel,
   RunnableVersion,
   VersionSource,
-  VersionState,
 } from '../../interfaces';
 import { AppState } from '../state';
 import { getReleaseChannel, getOldestSupportedMajor } from '../versions';
@@ -317,10 +316,10 @@ export const ElectronSettings = observer(
       let icon: IconName = 'box';
       let humanState = 'Downloaded';
 
-      if (state === VersionState.downloading) {
+      if (state === 'downloading') {
         icon = 'cloud-download';
         humanState = 'Downloading';
-      } else if (state === VersionState.unknown) {
+      } else if (state === 'missing') {
         // The only way for a local version to be unknown
         // is for it to have been deleted. Mark as unavailable.
         icon = isLocal ? 'issue' : 'cloud';
@@ -351,21 +350,22 @@ export const ElectronSettings = observer(
       };
 
       switch (state) {
-        case VersionState.ready:
+        case 'installed':
+        case 'downloaded':
           buttonProps.icon = 'trash';
           buttonProps.onClick = () => appState.removeVersion(ver);
           buttonProps.text = isLocal ? 'Remove' : 'Delete';
           break;
 
-        case VersionState.downloading:
-        case VersionState.unzipping:
+        case 'downloading':
+        case 'installing':
           buttonProps.disabled = true;
           buttonProps.icon = 'cloud-download';
           buttonProps.loading = true;
           buttonProps.text = 'Downloading';
           break;
 
-        case VersionState.unknown:
+        case 'missing':
           buttonProps.disabled = false;
           buttonProps.loading = false;
           buttonProps.icon = isLocal ? 'trash' : 'cloud-download';

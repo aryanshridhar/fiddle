@@ -7,31 +7,19 @@ import {
   RunnableVersion,
   Version,
   VersionSource,
-  VersionState,
 } from '../../src/interfaces';
-import {
-  getVersionState,
-  removeBinary,
-  setupBinary,
-} from '../../src/renderer/binary';
 import { Bisector } from '../../src/renderer/bisect';
 import { getTemplate } from '../../src/renderer/content';
 import { ipcRendererManager } from '../../src/renderer/ipc';
 import { AppState } from '../../src/renderer/state';
 import { getElectronVersions, makeRunnable } from '../../src/renderer/versions';
-import { fetchVersions, saveLocalVersions } from '../../src/renderer/versions';
+import { fetchVersions } from '../../src/renderer/versions';
 import { getName } from '../../src/utils/get-name';
 import { VersionsMock, createEditorValues } from '../mocks/mocks';
 import { overridePlatform, resetPlatform } from '../utils';
-import { ELECTRON_MIRROR } from '../../src/renderer/mirror-constants';
 
 jest.mock('../../src/renderer/content', () => ({
   getTemplate: jest.fn(),
-}));
-jest.mock('../../src/renderer/binary', () => ({
-  removeBinary: jest.fn(),
-  setupBinary: jest.fn(),
-  getVersionState: jest.fn().mockImplementation((v) => v.state),
 }));
 jest.mock('../../src/renderer/versions', () => {
   const { getReleaseChannel } = jest.requireActual(
@@ -66,8 +54,6 @@ describe('AppState', () => {
     ({ mockVersions, mockVersionsArray } = new VersionsMock());
 
     (fetchVersions as jest.Mock).mockResolvedValue(mockVersionsArray);
-    (getVersionState as jest.Mock).mockImplementation((v) => v.state);
-
     appState = new AppState(mockVersionsArray);
 
     ipcRendererManager.removeAllListeners();
@@ -243,7 +229,7 @@ describe('AppState', () => {
 
     it('handles undownloaded versions', () => {
       Object.values(appState.versions).forEach(
-        (ver) => (ver.state = VersionState.unknown),
+        (ver) => (ver.state = 'missing'),
       );
 
       appState.showUndownloadedVersions = false;
@@ -284,74 +270,6 @@ describe('AppState', () => {
         ElectronReleaseChannel.nightly,
         ElectronReleaseChannel.stable,
       ]);
-    });
-  });
-
-  describe('removeVersion()', () => {
-    let active: string;
-    let version: string;
-
-    beforeEach(() => {
-      active = appState.currentElectronVersion.version;
-      version = mockVersionsArray.find((v) => v.version !== active)!.version;
-    });
-
-    it('does not remove the active version', async () => {
-      const ver = appState.versions[active];
-      await appState.removeVersion(ver);
-      expect(removeBinary).not.toHaveBeenCalled();
-    });
-
-    it('removes a version', async () => {
-      const ver = appState.versions[version];
-      ver.state = VersionState.ready;
-      await appState.removeVersion(ver);
-      expect(removeBinary).toHaveBeenCalledWith<any>(ver);
-    });
-
-    it('does not remove it if not necessary', async () => {
-      const ver = appState.versions[version];
-      ver.state = VersionState.unknown;
-      await appState.removeVersion(ver);
-      expect(removeBinary).toHaveBeenCalledTimes(0);
-    });
-
-    it('removes (but does not delete) a local version', async () => {
-      const localPath = '/fake/path';
-
-      const ver = appState.versions[version];
-      ver.localPath = localPath;
-      ver.source = VersionSource.local;
-      ver.state = VersionState.ready;
-
-      await appState.removeVersion(ver);
-
-      expect(saveLocalVersions).toHaveBeenCalledTimes(1);
-      expect(appState.versions[version]).toBeUndefined();
-      expect(removeBinary).toHaveBeenCalledTimes(0);
-    });
-  });
-
-  describe('downloadVersion()', () => {
-    it('downloads a version', async () => {
-      const ver = appState.versions['2.0.2'];
-      ver.state = VersionState.unknown;
-
-      await appState.downloadVersion(ver);
-
-      expect(setupBinary).toHaveBeenCalledWith<any>(
-        ver,
-        ELECTRON_MIRROR.sources.DEFAULT,
-      );
-    });
-
-    it('does not download a version if already ready', async () => {
-      const ver = appState.versions['2.0.2'];
-      ver.state = VersionState.ready;
-
-      await appState.downloadVersion(ver);
-
-      expect(setupBinary).not.toHaveBeenCalled();
     });
   });
 

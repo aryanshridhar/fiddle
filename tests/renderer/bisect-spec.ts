@@ -1,9 +1,9 @@
-import { VersionSource, VersionState } from '../../src/interfaces';
+import { VersionSource } from '../../src/interfaces';
 import { Bisector } from '../../src/renderer/bisect';
 
 const generateVersionRange = (rangeLength: number) =>
   new Array(rangeLength).fill(0).map((_, i) => ({
-    state: VersionState.ready,
+    state: 'installed',
     version: `${i + 1}.0.0`,
     source: VersionSource.local,
   }));

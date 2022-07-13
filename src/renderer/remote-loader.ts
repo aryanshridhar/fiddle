@@ -3,7 +3,6 @@ import {
   ElectronReleaseChannel,
   PACKAGE_NAME,
   VersionSource,
-  VersionState,
 } from '../interfaces';
 import { getOctokit } from '../utils/octokit';
 import { ELECTRON_ORG, ELECTRON_REPO } from './constants';
@@ -174,7 +173,7 @@ export class RemoteLoader {
     if (!this.appState.hasVersion(version)) {
       const versionToDownload = {
         source: VersionSource.remote,
-        state: VersionState.unknown,
+        state: 'missing',
         version,
       };
 

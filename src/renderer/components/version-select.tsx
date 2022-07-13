@@ -19,7 +19,7 @@ import * as React from 'react';
 import semver from 'semver';
 import { disableDownload } from '../../utils/disable-download';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
-import { RunnableVersion, VersionSource, VersionState } from '../../interfaces';
+import { RunnableVersion, VersionSource } from '../../interfaces';
 import { highlightText } from '../../utils/highlight-text';
 import { AppState } from '../state';
 
@@ -68,11 +68,11 @@ export function getItemLabel({ source, state, name }: RunnableVersion): string {
   if (source === VersionSource.local) {
     label = name || 'Local';
   } else {
-    if (state === VersionState.unknown) {
+    if (state === 'missing') {
       label = `Not downloaded`;
-    } else if (state === VersionState.ready) {
+    } else if (state === 'installed' || state === 'downloaded') {
       label = `Downloaded`;
-    } else if (state === VersionState.downloading) {
+    } else if (state === 'downloading') {
       label = `Downloading`;
     }
   }
@@ -89,14 +89,18 @@ export function getItemLabel({ source, state, name }: RunnableVersion): string {
  */
 export function getItemIcon({ state }: RunnableVersion) {
   switch (state) {
-    case VersionState.unknown:
+    case 'missing':
       return 'cloud';
-    case VersionState.ready:
+    case 'installed':
+    case 'downloaded':
       return 'saved';
-    case VersionState.downloading:
+    case 'downloading':
       return 'cloud-download';
-    case VersionState.unzipping:
+    case 'installing':
       return 'compressed';
+    // Ideally the code execution shoudln't reach at this point.
+    default:
+      return 'cloud';
   }
 }
 

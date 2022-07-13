@@ -5,7 +5,6 @@ import {
   RunnableVersion,
   TestRequest,
   VersionSource,
-  VersionState,
 } from '../../src/interfaces';
 import { IpcEvents } from '../../src/ipc-events';
 
@@ -24,7 +23,7 @@ describe('Task Runner component', () => {
   function makeRunnables(versions: string[]): RunnableVersion[] {
     return versions.map((version) => ({
       source: VersionSource.remote,
-      state: VersionState.unknown,
+      state: 'missing',
       version,
     }));
   }

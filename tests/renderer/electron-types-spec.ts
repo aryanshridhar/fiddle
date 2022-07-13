@@ -3,11 +3,7 @@ import * as path from 'path';
 import * as tmp from 'tmp';
 
 import { ElectronTypes } from '../../src/renderer/electron-types';
-import {
-  RunnableVersion,
-  VersionSource,
-  VersionState,
-} from '../../src/interfaces';
+import { RunnableVersion, VersionSource } from '../../src/interfaces';
 
 import { MonacoMock } from '../mocks/mocks';
 import { waitFor } from '../utils';
@@ -40,7 +36,7 @@ describe('ElectronTypes', () => {
 
     remoteVersion = {
       version,
-      state: VersionState.ready,
+      state: 'installed',
       source: VersionSource.remote,
     } as const;
     cacheFile = path.join(cacheDir, remoteVersion.version, 'electron.d.ts');
@@ -48,7 +44,7 @@ describe('ElectronTypes', () => {
     localVersion = {
       version,
       localPath: localDir,
-      state: VersionState.ready,
+      state: 'installed',
       source: VersionSource.local,
     } as const;
     localFile = path.join(localDir, 'gen/electron/tsc/typings/electron.d.ts');
@@ -71,7 +67,7 @@ describe('ElectronTypes', () => {
     const missingLocalVersion = {
       version,
       localPath: '/dev/null',
-      state: VersionState.ready,
+      state: 'installed',
       source: VersionSource.local,
     } as const;
 
