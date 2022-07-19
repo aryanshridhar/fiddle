@@ -10,42 +10,7 @@ on:
   pull_request:
 
 jobs:
-  test:
-    name: Test (${{ matrix.os }} - ${{ matrix.arch }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ macOS-latest, ubuntu-latest, windows-latest ]
-        arch: [ x64 ]
-        include:
-          - os: macOS-latest
-            arch: arm64
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3.4.1
-        with:
-          node-version: 16.x
-          cache: yarn
-      - name: Install
-        run: yarn --frozen-lockfile --network-timeout 100000 || yarn --frozen-lockfile --network-timeout 100000 || yarn --frozen-lockfile --network-timeout 100000
-      - name: Create fake contributors
-        uses: 1arp/create-a-file-action@0.2
-        with:
-          path: 'static'
-          file: 'contributors.json'
-          content: "[]"
-      - name: lint
-        run: yarn lint
-      - name: test
-        run: yarn test:ci
-      - name: Coveralls
-        if: matrix.os == 'ubuntu-latest'
-        uses: coverallsapp/github-action@1.1.3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
   build:
-    needs: test
     name: Build (${{ matrix.os }} - ${{ matrix.arch }})
     runs-on: ${{ matrix.os }}
     strategy:

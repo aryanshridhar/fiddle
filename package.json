@@ -12,7 +12,7 @@
     "lint:templates": "standard \"static/**/*.js\" --fix",
     "lint:links": "node ./tools/check-links.js",
     "lint": "npm-run-all \"lint:*\"",
-    "make": "cross-env NODE_ENV=production electron-forge make",
+    "make": "electron-forge make",
     "package": "electron-forge package",
     "publish": "electron-forge publish",
     "start": "rimraf ./.webpack && electron-forge start --",
