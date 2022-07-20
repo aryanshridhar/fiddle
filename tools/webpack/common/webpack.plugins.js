@@ -8,9 +8,8 @@ module.exports = [
     __importStar: ['tslib', '__importStar'],
   }),
   new webpack.DefinePlugin({
-    STATIC_DIR: webpack.DefinePlugin.runtimeValue(() => {
-      const rootDir = process.cwd();
-      return JSON.stringify(path.join(rootDir, './static'));
+    STATIC_DIR: webpack.DefinePlugin.runtimeValue(({ module }) => {
+      return JSON.stringify(path.join(__filename, '../../../../static'));
     }, true),
   }),
 ];
