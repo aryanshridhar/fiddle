@@ -9,7 +9,8 @@ module.exports = [
   }),
   new webpack.DefinePlugin({
     STATIC_DIR: webpack.DefinePlugin.runtimeValue(() => {
-      return JSON.stringify(path.resolve(__dirname, '../../../static/'));
+      const rootDir = process.cwd();
+      return JSON.stringify(path.join(rootDir, './static'));
     }, true),
   }),
 ];
@@ -17,5 +18,4 @@ module.exports = [
 // 3 ideas -
 
 // * Use process.cwd() to check the file root path
-// * Use path.resolve insteed of path.join and run
 // * Look through the docs better and figure out the best way
