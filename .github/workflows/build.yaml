@@ -91,7 +91,7 @@ jobs:
         run: yarn --network-timeout 100000 || yarn --network-timeout 100000 || yarn --network-timeout 100000
       - name: Make
         if: startsWith(github.ref, 'refs/tags/')
-        run: yarn make --arch=${{ matrix.arch }}
+        run: set NODE_ENV=development && yarn make --arch=${{ matrix.arch }} 
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
