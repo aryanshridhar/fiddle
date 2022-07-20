@@ -3,8 +3,12 @@ import { EditorValues } from '../interfaces';
 import { readFiddle } from '../utils/read-fiddle';
 
 // Defined in webpack plugins.
-declare const STATIC_DIR: string;
-/**
+const STATIC_DIR =
+  process.env.NODE_ENV === 'production'
+    ? path.join(__dirname, '../../static')
+    : path.join(process.cwd(), './static');
+console.log(STATIC_DIR);
+/*
  * Returns expected content for a given name.
  *
  * @param {string} name
