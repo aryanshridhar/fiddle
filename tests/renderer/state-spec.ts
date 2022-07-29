@@ -49,6 +49,10 @@ describe('AppState', () => {
     ipcRendererManager.removeAllListeners();
   });
 
+  afterAll(async () => {
+    setTimeout(() => true, 1000);
+  });
+
   it('exists', () => {
     expect(appState).toBeTruthy();
   });

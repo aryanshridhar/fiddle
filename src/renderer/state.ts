@@ -297,14 +297,14 @@ export class AppState {
     this.showChannels = this.showChannels.bind(this);
     this.changeRunnableState = this.changeRunnableState.bind(this);
 
-    // // Populating the current state of every version present
-    // versions.forEach((ver: RunnableVersion) => {
-    //   // The local electron builds `state` are already setup in verions.ts
-    //   if (ver.source !== 'local') {
-    //     const { version } = ver;
-    //     ver.state = this.getVersionState(this.installer.state(version));
-    //   }
-    // });
+    // Populating the current state of every version present
+    versions.forEach((ver: RunnableVersion) => {
+      // The local electron builds `state` are already setup in verions.ts
+      if (ver.source !== 'local') {
+        const { version } = ver;
+        ver.state = this.getVersionState(this.installer.state(version));
+      }
+    });
 
     // init fields
     this.versions = Object.fromEntries(versions.map((v) => [v.version, v]));
