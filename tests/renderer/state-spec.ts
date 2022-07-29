@@ -50,7 +50,7 @@ describe('AppState', () => {
   });
 
   afterAll(async () => {
-    setTimeout(() => true, 1000);
+    setTimeout(() => true, 2000);
   });
 
   it('exists', () => {
