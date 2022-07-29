@@ -49,8 +49,8 @@ describe('AppState', () => {
     ipcRendererManager.removeAllListeners();
   });
 
-  afterAll(() => {
-    setTimeout(() => true, 20000);
+  afterAll(async () => {
+    await appState.runner;
   });
 
   it('exists', () => {
