@@ -370,12 +370,12 @@ export class AppState {
       ...this.acceleratorsToBlock,
     ]);
 
-    this.setVersion(this.version);
+    // this.setVersion(this.version);
 
-    // Trigger the change state event
-    this.installer.on('state-changed', ({ version, state }) => {
-      this.changeRunnableState(version, state);
-    });
+    // // Trigger the change state event
+    // this.installer.on('state-changed', ({ version, state }) => {
+    //   this.changeRunnableState(version, state);
+    // });
   }
 
   /**
