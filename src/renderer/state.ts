@@ -46,7 +46,7 @@ import {
 import { getUsername } from '../utils/get-username';
 import { ELECTRON_MIRROR } from './mirror-constants';
 import {
-  // Runner,
+  Runner,
   Installer,
   BaseVersions,
   InstallState,
@@ -175,10 +175,10 @@ export class AppState {
     electronInstall: ELECTRON_INSTALL_PATH,
   });
 
-  // public runner: Promise<Runner> = Runner.create({
-  //   installer: this.installer,
-  //   versions: this.baseVersions,
-  // });
+  public runner: Promise<Runner> = Runner.create({
+    installer: this.installer,
+    versions: this.baseVersions,
+  });
 
   constructor(versions: RunnableVersion[]) {
     makeObservable<AppState, 'setPageHash'>(this, {
