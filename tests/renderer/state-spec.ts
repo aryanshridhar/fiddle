@@ -1,4 +1,4 @@
-import { RunnableVersion, VersionState } from '../../src/interfaces';
+import { RunnableVersion } from '../../src/interfaces';
 // import {
 //   getVersionState,
 //   removeBinary,
