@@ -49,13 +49,6 @@ describe('AppState', () => {
     ipcRendererManager.removeAllListeners();
   });
 
-  afterAll(async () => {
-    jest
-      .spyOn(appState, 'setVersion')
-      .mockImplementation(() => Promise.resolve());
-    await appState.runner;
-  });
-
   it('exists', () => {
     expect(appState).toBeTruthy();
   });
