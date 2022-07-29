@@ -1,4 +1,4 @@
-import { waitFor } from 'tests/utils';
+import { waitFor } from '../utils';
 import { RunnableVersion } from '../../src/interfaces';
 // import {
 //   getVersionState,
@@ -46,7 +46,7 @@ describe('AppState', () => {
     (fetchVersions as jest.Mock).mockResolvedValue(mockVersionsArray);
 
     appState = new AppState(mockVersionsArray);
-    waitFor(() => appState.runner);
+    await waitFor(() => appState.runner);
 
     ipcRendererManager.removeAllListeners();
   });
