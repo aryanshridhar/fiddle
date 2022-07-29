@@ -50,6 +50,9 @@ describe('AppState', () => {
   });
 
   afterAll(async () => {
+    jest
+      .spyOn(appState, 'setVersion')
+      .mockImplementation(() => Promise.resolve());
     await appState.runner;
   });
 
