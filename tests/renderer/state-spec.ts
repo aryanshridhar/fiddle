@@ -1,3 +1,5 @@
+jest.useFakeTimers();
+
 import { reaction } from 'mobx';
 import {
   BlockableAccelerator,
