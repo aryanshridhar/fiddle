@@ -40,11 +40,12 @@ describe('AppState', () => {
   let appState: AppState;
   let mockVersionsArray: RunnableVersion[];
 
-  beforeEach(() => {
+  beforeEach(async () => {
     ({ mockVersionsArray } = new VersionsMock());
     (fetchVersions as jest.Mock).mockResolvedValue(mockVersionsArray);
 
     appState = new AppState(mockVersionsArray);
+    await appState.runner;
 
     ipcRendererManager.removeAllListeners();
   });
