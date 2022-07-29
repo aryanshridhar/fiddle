@@ -42,10 +42,6 @@ describe('AppState', () => {
 
   beforeEach(() => {
     ({ mockVersionsArray } = new VersionsMock());
-
-    jest
-      .spyOn(AppState.prototype, 'getVersionState')
-      .mockImplementation(() => VersionState.ready);
     (fetchVersions as jest.Mock).mockResolvedValue(mockVersionsArray);
 
     appState = new AppState(mockVersionsArray);
