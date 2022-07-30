@@ -76,6 +76,10 @@ describe('AppState', () => {
     expect(appState).toBeTruthy();
   });
 
+  afterAll(async () => {
+    await Promise.all([appState.runner]);
+  });
+
   describe('updateElectronVersions()', () => {
     it('handles errors gracefully', async () => {
       (fetchVersions as jest.Mock).mockRejectedValue(new Error('Bwap-bwap'));
