@@ -32,7 +32,7 @@ const config = {
   },
   plugins: [
     [
-      '@electron-forge/plugin-webpack',
+      '@aryanshridhar/forge-plugin-webpack',
       {
         devContentSecurityPolicy:
           "default-src 'none'; img-src 'self' https: data:; media-src 'none'; child-src 'self'; object-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; font-src 'self' https:;",
