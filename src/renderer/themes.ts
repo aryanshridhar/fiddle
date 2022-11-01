@@ -1,7 +1,3 @@
-import * as path from 'path';
-
-import * as fs from 'fs-extra';
-
 import { CONFIG_PATH } from './constants';
 import {
   DefaultThemes,
@@ -11,7 +7,9 @@ import {
   defaultLight,
 } from './themes-defaults';
 
-export const THEMES_PATH = path.join(CONFIG_PATH, 'themes');
+const { joinPaths, existsSync, readJSON, readDir } = window.NodeAPI;
+
+export const THEMES_PATH = joinPaths(CONFIG_PATH, 'themes');
 
 /**
  * Activate a given theme (or the default)
@@ -38,10 +36,10 @@ export async function readThemeFile(
   if (name === DefaultThemes.LIGHT) return defaultLight as any;
 
   const file = name.endsWith('.json') ? name : `${name}.json`;
-  const themePath = path.join(THEMES_PATH, file);
+  const themePath = joinPaths(THEMES_PATH, file);
 
   try {
-    const theme = await fs.readJSON(themePath);
+    const theme = await readJSON(themePath);
     return {
       ...theme,
       name: theme.name || name.replace('.json', ''),
@@ -64,12 +62,12 @@ export async function getAvailableThemes(): Promise<Array<LoadedFiddleTheme>> {
     defaultLight as any,
   ];
 
-  if (!fs.existsSync(THEMES_PATH)) {
+  if (!existsSync(THEMES_PATH)) {
     return themes;
   }
 
   try {
-    const themeFiles = await fs.readdir(THEMES_PATH);
+    const themeFiles = await readDir(THEMES_PATH);
 
     for (const file of themeFiles) {
       const theme = await readThemeFile(file);

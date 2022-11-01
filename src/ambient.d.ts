@@ -17,6 +17,8 @@ declare global {
       removeDir: (path: string) => Promise<void>;
       writeFile: (file: fs.PathLike, data: any) => Promise<void>;
       extractZip: (zipPath: string, opts: Options) => Promise<void>;
+      readJSON: (file: string) => Promise<any>;
+      readDir: (file: string) => Promise<string[]>;
     };
   }
 }

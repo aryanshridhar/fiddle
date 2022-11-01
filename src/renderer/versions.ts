@@ -124,7 +124,7 @@ export function getVersionState(ver: Version): InstallState {
   const { localPath } = ver;
   if (localPath !== undefined) {
     const dir = Installer.getExecPath(localPath);
-    if (fs.existsSync(dir)) {
+    if (window.NodeAPI.existsSync(dir)) {
       return InstallState.installed;
     }
   }

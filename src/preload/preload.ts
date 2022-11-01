@@ -23,6 +23,12 @@ contextBridge.exposeInMainWorld('NodeAPI', {
   writeFile: (file: fs.PathLike, data: any) => {
     return fs.writeFile(file, data), { encoding: 'utf8' };
   },
+  readJSON: (file: string) => {
+    return fs.readJSON(file);
+  },
+  readDir: (file: string) => {
+    return fs.readdir(file);
+  },
   // TODO(aryanshridhar): Probably extract the rest apis within
   // new context name
   extractZip: (zipPath: string, opts: Options) => {
