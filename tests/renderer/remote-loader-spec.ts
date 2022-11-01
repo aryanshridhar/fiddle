@@ -6,7 +6,7 @@ import {
   PACKAGE_NAME,
   VersionSource,
 } from '../../src/interfaces';
-import { ipcRendererManager } from '../../src/renderer/ipc';
+import { ipcRendererManager } from '../../src/preload/ipc';
 import { RemoteLoader } from '../../src/renderer/remote-loader';
 import { isKnownFile, isSupportedFile } from '../../src/utils/editor-utils';
 import { getOctokit } from '../../src/utils/octokit';

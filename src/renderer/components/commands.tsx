@@ -4,7 +4,7 @@ import { Button, ControlGroup } from '@blueprintjs/core';
 import { observer } from 'mobx-react';
 
 import { IpcEvents } from '../../ipc-events';
-import { ipcRendererManager } from '../ipc';
+import { ipcRendererManager } from '../../preload/ipc';
 import { AppState } from '../state';
 import { GistActionButton } from './commands-action-button';
 import { AddressBar } from './commands-address-bar';

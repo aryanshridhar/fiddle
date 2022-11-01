@@ -5,11 +5,11 @@ import { autorun, reaction, when } from 'mobx';
 
 import { EditorValues, PACKAGE_NAME, SetFiddleOptions } from '../interfaces';
 import { IpcEvents, WEBCONTENTS_READY_FOR_IPC_SIGNAL } from '../ipc-events';
+import { ipcRendererManager } from '../preload/ipc';
 import { PackageJsonOptions, getPackageJson } from '../utils/get-package';
 import { USER_DATA_PATH } from './constants';
 import { ElectronTypes } from './electron-types';
 import { FileManager } from './file-manager';
-import { ipcRendererManager } from './ipc';
 import { RemoteLoader } from './remote-loader';
 import { Runner } from './runner';
 import { AppState } from './state';

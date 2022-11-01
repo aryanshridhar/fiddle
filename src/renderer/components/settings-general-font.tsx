@@ -4,7 +4,7 @@ import { Button, Callout, FormGroup, InputGroup } from '@blueprintjs/core';
 import { observer } from 'mobx-react';
 
 import { IpcEvents } from '../../ipc-events';
-import { ipcRendererManager } from '../ipc';
+import { ipcRendererManager } from '../../preload/ipc';
 import { AppState } from '../state';
 
 interface FontSettingsProps {

@@ -40,8 +40,8 @@ export function getMainWindowOptions(): Electron.BrowserWindowConstructorOptions
     show: false,
     webPreferences: {
       webviewTag: false,
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: false,
+      contextIsolation: true,
       preload: !!process.env.JEST
         ? path.join(process.cwd(), './.webpack/renderer/main_window/preload.js')
         : MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,

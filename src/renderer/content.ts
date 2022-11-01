@@ -1,22 +1,26 @@
-import * as path from 'path';
-
-import * as fs from 'fs-extra';
-
 import { EditorValues } from '../interfaces';
 import { readFiddle } from '../utils/read-fiddle';
 import { USER_DATA_PATH } from './constants';
 import { isReleasedMajor } from './versions';
 
+const {
+  joinPaths,
+  existsSync,
+  ensureDir,
+  removeDir,
+  writeFile,
+  extractZip,
+} = window.NodeAPI;
 const STATIC_DIR =
   process.env.NODE_ENV === 'production'
-    ? path.join(__dirname, '../../static')
-    : path.join(process.cwd(), './static');
+    ? joinPaths(__dirname, '../../static')
+    : joinPaths(process.cwd(), './static');
 
 // parent directory of all the downloaded template fiddles
-const TEMPLATES_DIR = path.join(USER_DATA_PATH, 'Templates');
+const TEMPLATES_DIR = joinPaths(USER_DATA_PATH, 'Templates');
 
 // location of the fallback template fiddle used iff downloading failed
-const STATIC_TEMPLATE_DIR = path.join(STATIC_DIR, 'electron-quick-start');
+const STATIC_TEMPLATE_DIR = joinPaths(STATIC_DIR, 'electron-quick-start');
 
 // electron-quick-start branch that holds the test template
 const TEST_TEMPLATE_BRANCH = 'test-template';
@@ -29,11 +33,11 @@ const TEST_TEMPLATE_BRANCH = 'test-template';
  * @returns {Promise<string>} Path to the folder where the fiddle is kept
  */
 async function prepareTemplate(branch: string): Promise<string> {
-  let folder = path.join(TEMPLATES_DIR, `electron-quick-start-${branch}`);
+  let folder = joinPaths(TEMPLATES_DIR, `electron-quick-start-${branch}`);
 
   try {
     // if we don't have it, download it
-    if (!fs.existsSync(folder)) {
+    if (!existsSync(folder)) {
       console.log(`Content: ${branch} downloading template`);
       const url = `https://github.com/electron/electron-quick-start/archive/${branch}.zip`;
       const response = await fetch(url);
@@ -46,17 +50,16 @@ async function prepareTemplate(branch: string): Promise<string> {
       const { tmpNameSync } = await import('tmp');
       const tempfile = tmpNameSync({ template: 'electron-fiddle-XXXXXX.zip' });
       console.log(`Content: ${branch} saving template to "${tempfile}"`);
-      await fs.writeFile(tempfile, buffer, { encoding: 'utf8' });
+      await writeFile(tempfile, buffer);
 
       // unzip it from the tempfile
       console.log(`Content: ${branch} unzipping template`);
-      await fs.ensureDir(TEMPLATES_DIR);
-      const { default: extract } = await import('extract-zip');
-      await extract(tempfile, { dir: TEMPLATES_DIR });
+      await ensureDir(TEMPLATES_DIR);
+      await extractZip(tempfile, { dir: TEMPLATES_DIR });
 
       // cleanup
       console.log(`Content: ${branch} unzipped; removing "${tempfile}"`);
-      await fs.remove(tempfile);
+      await removeDir(tempfile);
     }
   } catch (err) {
     folder = STATIC_TEMPLATE_DIR;

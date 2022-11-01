@@ -1,8 +1,8 @@
 import { EditorValues, MAIN_JS, SetFiddleOptions } from '../../src/interfaces';
 import { IpcEvents } from '../../src/ipc-events';
+import { ipcRendererManager } from '../../src/preload/ipc';
 import { App } from '../../src/renderer/app';
 import { EditorMosaic } from '../../src/renderer/editor-mosaic';
-import { ipcRendererManager } from '../../src/renderer/ipc';
 import { defaultDark, defaultLight } from '../../src/renderer/themes-defaults';
 import { createEditorValues } from '../mocks/mocks';
 import { waitFor } from '../utils';

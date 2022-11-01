@@ -1,5 +1,4 @@
 import { InstallState, Installer } from '@electron/fiddle-core';
-import * as fs from 'fs-extra';
 import semver from 'semver';
 
 import releasesJSON from '../../static/releases.json';

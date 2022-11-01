@@ -5,10 +5,10 @@ import { InstallState, Installer } from '@electron/fiddle-core';
 
 import { FileTransform, RunResult, RunnableVersion } from '../interfaces';
 import { IpcEvents } from '../ipc-events';
+import { ipcRendererManager } from '../preload/ipc';
 import { PackageJsonOptions } from '../utils/get-package';
 import { maybePlural } from '../utils/plural-maybe';
 import { Bisector } from './bisect';
-import { ipcRendererManager } from './ipc';
 import {
   PMOperationOptions,
   addModules,

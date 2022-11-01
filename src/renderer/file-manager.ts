@@ -5,10 +5,10 @@ import semver from 'semver';
 
 import { FileTransform, Files, PACKAGE_NAME } from '../interfaces';
 import { IpcEvents } from '../ipc-events';
+import { ipcRendererManager } from '../preload/ipc';
 import { isKnownFile } from '../utils/editor-utils';
 import { DEFAULT_OPTIONS, PackageJsonOptions } from '../utils/get-package';
 import { readFiddle } from '../utils/read-fiddle';
-import { ipcRendererManager } from './ipc';
 import { AppState } from './state';
 import { getTemplateValues } from './templates';
 import { dotfilesTransform } from './transforms/dotfiles';

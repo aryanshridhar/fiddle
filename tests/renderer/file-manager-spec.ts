@@ -2,8 +2,8 @@ import * as fs from 'fs-extra';
 
 import { Files, PACKAGE_NAME, SetFiddleOptions } from '../../src/interfaces';
 import { IpcEvents } from '../../src/ipc-events';
+import { ipcRendererManager } from '../../src/preload/ipc';
 import { FileManager } from '../../src/renderer/file-manager';
-import { ipcRendererManager } from '../../src/renderer/ipc';
 import { AppState } from '../../src/renderer/state';
 import { isSupportedFile } from '../../src/utils/editor-utils';
 import { readFiddle } from '../../src/utils/read-fiddle';

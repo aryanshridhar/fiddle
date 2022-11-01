@@ -8,10 +8,10 @@ import {
   TestRequest,
 } from '../interfaces';
 import { IpcEvents } from '../ipc-events';
+import { ipcRendererManager } from '../preload/ipc';
 import { getVersionRange } from '../utils/get-version-range';
 import { normalizeVersion } from '../utils/normalize-version';
 import { App } from './app';
-import { ipcRendererManager } from './ipc';
 import { AppState } from './state';
 
 export class TaskRunner {

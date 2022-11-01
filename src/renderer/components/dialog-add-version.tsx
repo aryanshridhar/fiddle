@@ -17,8 +17,8 @@ import * as semver from 'semver';
 
 import { Version } from '../../interfaces';
 import { IpcEvents } from '../../ipc-events';
+import { ipcRendererManager } from '../../preload/ipc';
 import { getElectronNameForPlatform } from '../../utils/electron-name';
-import { ipcRendererManager } from '../ipc';
 import { AppState } from '../state';
 import { getLocalVersionForPath } from '../versions';
 

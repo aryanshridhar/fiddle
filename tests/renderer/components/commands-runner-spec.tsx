@@ -3,8 +3,8 @@ import * as React from 'react';
 import { InstallState } from '@electron/fiddle-core';
 import { shallow } from 'enzyme';
 
+import { ipcRendererManager } from '../../../src/preload/ipc';
 import { Runner } from '../../../src/renderer/components/commands-runner';
-import { ipcRendererManager } from '../../../src/renderer/ipc';
 import { StateMock } from '../../mocks/mocks';
 
 jest.mock('../../../src/renderer/file-manager');

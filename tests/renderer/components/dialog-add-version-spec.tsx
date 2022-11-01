@@ -3,8 +3,8 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 
 import { IpcEvents } from '../../../src/ipc-events';
+import { ipcRendererManager } from '../../../src/preload/ipc';
 import { AddVersionDialog } from '../../../src/renderer/components/dialog-add-version';
-import { ipcRendererManager } from '../../../src/renderer/ipc';
 import { StateMock } from '../../mocks/mocks';
 import { overridePlatform, resetPlatform } from '../../utils';
 

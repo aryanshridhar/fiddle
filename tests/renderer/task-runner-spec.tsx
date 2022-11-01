@@ -9,8 +9,8 @@ import {
   VersionSource,
 } from '../../src/interfaces';
 import { IpcEvents } from '../../src/ipc-events';
+import { ipcRendererManager } from '../../src/preload/ipc';
 import { App } from '../../src/renderer/app';
-import { ipcRendererManager } from '../../src/renderer/ipc';
 import { TaskRunner } from '../../src/renderer/task-runner';
 import { AppMock } from '../mocks/app';
 import { StateMock } from '../mocks/state';

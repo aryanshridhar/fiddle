@@ -12,11 +12,11 @@ import {
 
 import { EditorId, SetFiddleOptions } from '../../interfaces';
 import { IpcEvents } from '../../ipc-events';
+import { ipcRendererManager } from '../../preload/ipc';
 import { getEditorTitle } from '../../utils/editor-utils';
 import { getAtPath, setAtPath } from '../../utils/js-path';
 import { toggleMonaco } from '../../utils/toggle-monaco';
 import { getTemplate, getTestTemplate } from '../content';
-import { ipcRendererManager } from '../ipc';
 import { AppState } from '../state';
 import { Editor } from './editor';
 import { renderNonIdealState } from './editors-non-ideal-state';

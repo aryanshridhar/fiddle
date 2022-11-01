@@ -20,10 +20,10 @@ import {
   GistActionType,
 } from '../../interfaces';
 import { IpcEvents } from '../../ipc-events';
+import { ipcRendererManager } from '../../preload/ipc';
 import { ensureRequiredFiles } from '../../utils/editor-utils';
 import { getOctokit } from '../../utils/octokit';
 import { getTemplate } from '../content';
-import { ipcRendererManager } from '../ipc';
 import { AppState } from '../state';
 
 interface GistActionButtonProps {

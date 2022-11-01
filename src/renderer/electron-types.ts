@@ -11,6 +11,14 @@ import releases from '../../static/releases.json';
 import { RunnableVersion, Version, VersionSource } from '../interfaces';
 import { normalizeVersion } from '../utils/normalize-version';
 
+const {
+  joinPaths,
+  existsSync,
+  ensureDir,
+  removeDir,
+  writeFile,
+  extractZip,
+} = window.NodeAPI;
 const ELECTRON_DTS = 'electron.d.ts';
 
 /**
@@ -44,7 +52,7 @@ export class ElectronTypes {
 
     // If it's a local development version, pull Electron types from out directory.
     if (dir) {
-      const file = path.join(dir, 'gen/electron/tsc/typings', ELECTRON_DTS);
+      const file = joinPaths(dir, 'gen/electron/tsc/typings', ELECTRON_DTS);
       this.setTypesFromFile(file, version);
       try {
         this.watcher = watch(file, () => this.setTypesFromFile(file, version));
@@ -112,11 +120,11 @@ export class ElectronTypes {
   }
 
   private getCacheFile(version: string) {
-    return path.join(this.electronCacheDir, version, ELECTRON_DTS);
+    return joinPaths(this.electronCacheDir, version, ELECTRON_DTS);
   }
 
   private getCacheDir(version: string) {
-    return path.join(this.nodeCacheDir, version);
+    return joinPaths(this.nodeCacheDir, version);
   }
 
   private clear() {
@@ -171,7 +179,7 @@ export class ElectronTypes {
         `falling back to the latest applicable Node.js version type: ${downloadVersion}`,
       );
 
-      const maybeCachedDir = path.join(this.nodeCacheDir, downloadVersion);
+      const maybeCachedDir = joinPaths(this.nodeCacheDir, downloadVersion);
       if (fs.existsSync(maybeCachedDir)) return downloadVersion;
 
       response = await fetch(

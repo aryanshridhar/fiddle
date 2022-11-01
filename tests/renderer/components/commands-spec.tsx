@@ -4,9 +4,9 @@ import { Button, ControlGroup } from '@blueprintjs/core';
 import { shallow } from 'enzyme';
 
 import { IpcEvents } from '../../../src/ipc-events';
+import { ipcRendererManager } from '../../../src/preload/ipc';
 import { Commands } from '../../../src/renderer/components/commands';
 import { BisectHandler } from '../../../src/renderer/components/commands-bisect';
-import { ipcRendererManager } from '../../../src/renderer/ipc';
 import { StateMock } from '../../mocks/mocks';
 import { overridePlatform, resetPlatform } from '../../utils';
 

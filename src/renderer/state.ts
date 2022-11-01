@@ -30,6 +30,7 @@ import {
   VersionSource,
 } from '../interfaces';
 import { IpcEvents } from '../ipc-events';
+import { ipcRendererManager } from '../preload/ipc';
 import { getName } from '../utils/get-name';
 import { getUsername } from '../utils/get-username';
 import { normalizeVersion } from '../utils/normalize-version';
@@ -38,7 +39,6 @@ import { Bisector } from './bisect';
 import { ELECTRON_DOWNLOAD_PATH, ELECTRON_INSTALL_PATH } from './constants';
 import { getTemplate } from './content';
 import { EditorMosaic } from './editor-mosaic';
-import { ipcRendererManager } from './ipc';
 import { ELECTRON_MIRROR } from './mirror-constants';
 import { IPackageManager } from './npm';
 import {

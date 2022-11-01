@@ -2,11 +2,11 @@ import * as React from 'react';
 
 import { shallow } from 'enzyme';
 
+import { ipcRendererManager } from '../../../src/preload/ipc';
 import {
   WelcomeTour,
   getWelcomeTour,
 } from '../../../src/renderer/components/tour-welcome';
-import { ipcRendererManager } from '../../../src/renderer/ipc';
 import { StateMock } from '../../mocks/mocks';
 
 describe('Header component', () => {

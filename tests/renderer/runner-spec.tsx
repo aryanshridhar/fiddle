@@ -9,7 +9,7 @@ import {
   VersionSource,
 } from '../../src/interfaces';
 import { IpcEvents } from '../../src/ipc-events';
-import { ipcRendererManager } from '../../src/renderer/ipc';
+import { ipcRendererManager } from '../../src/preload/ipc';
 import {
   addModules,
   getIsPackageManagerInstalled,

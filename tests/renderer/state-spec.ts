@@ -10,9 +10,9 @@ import {
   Version,
   VersionSource,
 } from '../../src/interfaces';
+import { ipcRendererManager } from '../../src/preload/ipc';
 import { Bisector } from '../../src/renderer/bisect';
 import { getTemplate } from '../../src/renderer/content';
-import { ipcRendererManager } from '../../src/renderer/ipc';
 import { AppState } from '../../src/renderer/state';
 import {
   fetchVersions,

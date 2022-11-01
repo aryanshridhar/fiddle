@@ -7,8 +7,8 @@ import { observer } from 'mobx-react';
 
 import { GistActionState } from '../../interfaces';
 import { IpcEvents } from '../../ipc-events';
+import { ipcRendererManager } from '../../preload/ipc';
 import { idFromUrl, urlFromId } from '../../utils/gist';
-import { ipcRendererManager } from '../ipc';
 import { AppState } from '../state';
 
 interface AddressBarProps {
